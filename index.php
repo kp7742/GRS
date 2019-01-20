@@ -34,7 +34,7 @@ if(isset($_REQUEST['signup'])){
         } elseif ($loginType == 'faculty') {
             addUsers($loginType,
                 null,
-                $_REQUEST['department'],
+                $_REQUEST['department2'],
                 null,
                 $_REQUEST['fname'],
                 $_REQUEST['lname'],
@@ -106,7 +106,8 @@ if(isset($_REQUEST['otpbox'])){
         echo '<script>alert("You Are Already Verified!");</script>';
     } else {
         $reqotp = $_REQUEST['otp'];
-        $otp = getOtp($_SESSION['email'])[0]['Otp'];
+		$otpresult = getOtp($_SESSION['email']);
+        $otp = $otpresult[0]['Otp'];
         if($otp == $reqotp){
             $result = getUser($_SESSION['email'],$_SESSION['pass']);
             VerifyMail(true,$_SESSION['email']);
@@ -214,6 +215,20 @@ if(isset($_REQUEST['signout']) && isset($_SESSION['uid'])){
                                 <option value="be-civil">BE Civil</option>
                                 <option value="be-chemical">BE Chemical</option>
                                 <option value="be-electrical">BE Electrical</option>
+                                <option value="bvoc-software-development">B.Voc. Software Development </option>
+                                <option value="bvoc-refrigeration">B.Voc. Refrigeration</option>
+                                <option value="bvoc-production-technology">B.Voc. Production Technology</option>
+                            </select>
+                        </div>
+						<div id="field-dept2" class="fb-text form-group field-dept">
+                            <label class="fb-text-label">Department</label><br>
+							<select name="department2" title="Department" style="width: 150px;">
+                                <option value="computer" selected>Computer</option>
+                                <option value="mechanical">Mechanical</option>
+                                <option value="civil">Civil</option>
+                                <option value="chemical">Chemical</option>
+                                <option value="electrical">Electrical</option>
+								<option value="scienceandhumanity">Science & Humanity</option>
                                 <option value="bvoc-software-development">B.Voc. Software Development </option>
                                 <option value="bvoc-refrigeration">B.Voc. Refrigeration</option>
                                 <option value="bvoc-production-technology">B.Voc. Production Technology</option>

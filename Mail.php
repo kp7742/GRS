@@ -1,16 +1,9 @@
 <?php
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require 'PHPMailer/Exception.php';
-require 'PHPMailer/PHPMailer.php';
-require 'PHPMailer/SMTP.php';
+require 'PHPMailer/PHPMailerAutoload.php';
 
 function sendMail($eMail){
-    $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
-    try {
-        //Server settings
-        $mail->isSMTP();                                      // Set mailer to use SMTP
+    $mail = new PHPMailer;                              // Passing `true` enables exceptions
+    //$mail->isSMTP();                                      // Set mailer to use SMTP
         $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
         $mail->SMTPAuth = true;                               // Enable SMTP authentication
         $mail->Username = 'kp747007@gmail.com';                 // SMTP username
@@ -27,18 +20,17 @@ function sendMail($eMail){
         $mail->Subject = 'Query Submission';
         $mail->Body    = 'Your Query is Submitted, We will Contact Back you soon!';
 
-        $mail->send();
-    } catch (Exception $e) {
-        error_log('Message could not be sent. Mailer Error: ', $mail->ErrorInfo);
-    }
+        if(!$mail->send()) {
+			echo 'Message could not be sent.';
+			echo 'Mailer Error: ' . $mail->ErrorInfo;
+		}
 }
 
 function QuerySubMail($user, $dept, $query){
     $eMail = "vcj.fetr@gmail.com";
-    $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
-    try {
-        //Server settings
-        $mail->isSMTP();                                      // Set mailer to use SMTP
+    $mail = new PHPMailer;                              // Passing `true` enables exceptions
+    //Server settings
+        //$mail->isSMTP();                                      // Set mailer to use SMTP
         $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
         $mail->SMTPAuth = true;                               // Enable SMTP authentication
         $mail->Username = 'kp747007@gmail.com';                 // SMTP username
@@ -63,17 +55,16 @@ function QuerySubMail($user, $dept, $query){
             "\n\nType of Grievance: ".$dept.
             "\n\nGrievance: ".$query;
 
-        $mail->send();
-    } catch (Exception $e) {
-        error_log('Message could not be sent. Mailer Error: ', $mail->ErrorInfo);
-    }
+        if(!$mail->send()) {
+			echo 'Message could not be sent.';
+			echo 'Mailer Error: ' . $mail->ErrorInfo;
+		}
 }
 
 function ConcernReplyMail($eMail, $user){
-    $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
-    try {
-        //Server settings
-        $mail->isSMTP();                                      // Set mailer to use SMTP
+    $mail = new PHPMailer;                              // Passing `true` enables exceptions
+    //Server settings
+        //$mail->isSMTP();                                      // Set mailer to use SMTP
         $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
         $mail->SMTPAuth = true;                               // Enable SMTP authentication
         $mail->Username = 'kp747007@gmail.com';                 // SMTP username
@@ -90,17 +81,16 @@ function ConcernReplyMail($eMail, $user){
         $mail->Subject = 'Raised Concern';
         $mail->Body = "Hello ".$user[0]['FName']." ".$user[0]['LName'].",\n\nThank you for your concern. We will look into it and acknowledge through your registered email!";
 
-        $mail->send();
-    } catch (Exception $e) {
-        error_log('Message could not be sent. Mailer Error: ', $mail->ErrorInfo);
-    }
+        if(!$mail->send()) {
+			echo 'Message could not be sent.';
+			echo 'Mailer Error: ' . $mail->ErrorInfo;
+		}
 }
 
 function SendOtp($eMail,$fname,$lname, $otp){
-    $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
-    try {
-        //Server settings
-        $mail->isSMTP();                                      // Set mailer to use SMTP
+    $mail = new PHPMailer;                              // Passing `true` enables exceptions
+    //Server settings
+        //$mail->isSMTP();                                      // Set mailer to use SMTP
         $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
         $mail->SMTPAuth = true;                               // Enable SMTP authentication
         $mail->Username = 'kp747007@gmail.com';                 // SMTP username
@@ -117,17 +107,16 @@ function SendOtp($eMail,$fname,$lname, $otp){
         $mail->Subject = 'OTP';
         $mail->Body = "Hello ".$fname." ".$lname.",\n\nYour One Time Password is ".$otp."\n\nPlease Login in Your Account and Enter Otp to Verify Account.";
 
-        $mail->send();
-    } catch (Exception $e) {
-        error_log('Message could not be sent. Mailer Error: ', $mail->ErrorInfo);
-    }
+        if(!$mail->send()) {
+			echo 'Message could not be sent.';
+			echo 'Mailer Error: ' . $mail->ErrorInfo;
+		}
 }
 
 function SendVerified($eMail,$fname,$lname){
-    $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
-    try {
-        //Server settings
-        $mail->isSMTP();                                      // Set mailer to use SMTP
+    $mail = new PHPMailer;                              // Passing `true` enables exceptions
+    //Server settings
+        //$mail->isSMTP();                                      // Set mailer to use SMTP
         $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
         $mail->SMTPAuth = true;                               // Enable SMTP authentication
         $mail->Username = 'kp747007@gmail.com';                 // SMTP username
@@ -141,12 +130,12 @@ function SendVerified($eMail,$fname,$lname){
         $mail->addCC('admin@grievance.fetr.ac.in');
 
         //Content
-        $mail->Subject = 'OTP';
+        $mail->Subject = 'Account';
         $mail->Body = "Hello ".$fname." ".$lname.",\n\nYour Account is Verified Successfully!";
 
-        $mail->send();
-    } catch (Exception $e) {
-        error_log('Message could not be sent. Mailer Error: ', $mail->ErrorInfo);
-    }
+        if(!$mail->send()) {
+			echo 'Message could not be sent.';
+			echo 'Mailer Error: ' . $mail->ErrorInfo;
+		}
 }
 ?>

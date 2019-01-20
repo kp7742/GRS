@@ -1,17 +1,33 @@
 <?php
+
 	function getServer() {
-		return "sql177.main-hosting.eu";
+
+		return "grievancerngpit.db.10570501.4a0.hostedresource.net";
+
 	}
+
+
 
 	function getDatabaseName() {
-		return "u655486056_grs";
+
+		return "grievancerngpit";
+
 	}
+
+
 
 	function getUserName() {
-		return "u655486056_kmods";
+
+		return "grievancerngpit";
+
 	}
 
+
+
 	function getPassword() {
-		return "Kuldip123";
+
+		return "grievance#RNGPIT11";
+
 	}
+
 ?>
