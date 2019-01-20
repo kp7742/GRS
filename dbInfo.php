@@ -1,17 +1,17 @@
 <?php
 	function getServer() {
-		return "sql7.freemysqlhosting.net:3306";
+		return "sql177.main-hosting.eu";
 	}
 
 	function getDatabaseName() {
-		return "sql7273588";
+		return "u655486056_grs";
 	}
 
 	function getUserName() {
-		return "sql7273588";
+		return "u655486056_kmods";
 	}
 
 	function getPassword() {
-		return "u18Ws6HWn7";
+		return "Kuldip123";
 	}
 ?>

@@ -5,11 +5,17 @@ $.validate({
     }
 });
 
+//$("#modalOtpBox").click();
+
 $("#Type").change(function(){
     if(this.selectedIndex === 0){
         $("#field-pen").show();
         $("#field-dept").show();
         $("#field-sem").show();
+    } else if(this.selectedIndex === 2){
+        $("#field-pen").hide();
+        $("#field-dept").show();
+        $("#field-sem").hide();
     } else {
         $("#field-pen").hide();
         $("#field-dept").hide();

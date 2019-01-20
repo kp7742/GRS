@@ -2,6 +2,12 @@
 	require_once("dbInfo.php");
     require 'Mail.php';
 
+    function sendOtptoUser($eMail,$fname,$lname){
+        $newOtp = genOtp();
+        addOtp($eMail,$newOtp,false);
+        SendOtp($eMail,$fname,$lname,$newOtp);
+    }
+
 	function addGrievance($user, $eMail, $gType, $gState) {
 		// Connect to database.
 		$conn = mysqli_connect(getServer(), getUserName(), getPassword(), getDatabaseName());

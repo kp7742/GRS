@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 10, 2019 at 05:06 PM
+-- Generation Time: Jan 19, 2019 at 09:36 AM
 -- Server version: 10.1.37-MariaDB
 -- PHP Version: 7.2.12
 
@@ -40,6 +40,27 @@ CREATE TABLE `grievance` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `otp`
+--
+
+CREATE TABLE `otp` (
+  `Id` int(10) NOT NULL,
+  `EMail` varchar(50) NOT NULL,
+  `Otp` int(6) NOT NULL,
+  `Verify` tinyint(1) NOT NULL DEFAULT '0',
+  `CreationDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `otp`
+--
+
+INSERT INTO `otp` (`Id`, `EMail`, `Otp`, `Verify`, `CreationDate`) VALUES
+(1, 'patel.kuldip91@gmail.com', 225542, 1, '2019-01-18 19:52:12');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -65,7 +86,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`Id`, `Type`, `Enroll`, `Dept`, `Sem`, `FName`, `LName`, `EMail`, `Password`, `Mobile`, `BirthDate`, `Gender`, `Admin`, `CreationDate`) VALUES
-(6, 'student', '160840107036', 'computer', 6, 'Kuldip', 'Patel', 'patel.kuldip91@gmail.com', 'f865b53623b121fd34ee5426c792e5c33af8c227', '+919998897742', '1998-10-11', 'male', 0, '2019-01-10 16:05:41');
+(1, 'student', '160840107036', 'computer', 6, 'Kuldip', 'Patel', 'patel.kuldip91@gmail.com', 'f865b53623b121fd34ee5426c792e5c33af8c227', '+919998897742', '1998-10-11', 'male', 0, '2019-01-18 19:52:12');
 
 --
 -- Indexes for dumped tables
@@ -78,10 +99,16 @@ ALTER TABLE `grievance`
   ADD PRIMARY KEY (`Id`,`Uid`);
 
 --
+-- Indexes for table `otp`
+--
+ALTER TABLE `otp`
+  ADD PRIMARY KEY (`Id`,`EMail`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`Id`);
+  ADD PRIMARY KEY (`Id`,`EMail`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -91,13 +118,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `grievance`
 --
 ALTER TABLE `grievance`
-  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `otp`
+--
+ALTER TABLE `otp`
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -95,4 +95,58 @@ function ConcernReplyMail($eMail, $user){
         error_log('Message could not be sent. Mailer Error: ', $mail->ErrorInfo);
     }
 }
+
+function SendOtp($eMail,$fname,$lname, $otp){
+    $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
+    try {
+        //Server settings
+        $mail->isSMTP();                                      // Set mailer to use SMTP
+        $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+        $mail->SMTPAuth = true;                               // Enable SMTP authentication
+        $mail->Username = 'kp747007@gmail.com';                 // SMTP username
+        $mail->Password = 'lhqpyicjmahoyhhx';                           // SMTP password
+        $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+        $mail->Port = 587;                                   // TCP port to connect to
+
+        //Recipients
+        $mail->setFrom('admin@grievance.fetr.ac.in', "Grievance Redressal System");
+        $mail->addAddress($eMail);// Add a recipient
+        $mail->addCC('admin@grievance.fetr.ac.in');
+
+        //Content
+        $mail->Subject = 'OTP';
+        $mail->Body = "Hello ".$fname." ".$lname.",\n\nYour One Time Password is ".$otp."\n\nPlease Login in Your Account and Enter Otp to Verify Account.";
+
+        $mail->send();
+    } catch (Exception $e) {
+        error_log('Message could not be sent. Mailer Error: ', $mail->ErrorInfo);
+    }
+}
+
+function SendVerified($eMail,$fname,$lname){
+    $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
+    try {
+        //Server settings
+        $mail->isSMTP();                                      // Set mailer to use SMTP
+        $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+        $mail->SMTPAuth = true;                               // Enable SMTP authentication
+        $mail->Username = 'kp747007@gmail.com';                 // SMTP username
+        $mail->Password = 'lhqpyicjmahoyhhx';                           // SMTP password
+        $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+        $mail->Port = 587;                                   // TCP port to connect to
+
+        //Recipients
+        $mail->setFrom('admin@grievance.fetr.ac.in', "Grievance Redressal System");
+        $mail->addAddress($eMail);// Add a recipient
+        $mail->addCC('admin@grievance.fetr.ac.in');
+
+        //Content
+        $mail->Subject = 'OTP';
+        $mail->Body = "Hello ".$fname." ".$lname.",\n\nYour Account is Verified Successfully!";
+
+        $mail->send();
+    } catch (Exception $e) {
+        error_log('Message could not be sent. Mailer Error: ', $mail->ErrorInfo);
+    }
+}
 ?>

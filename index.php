@@ -1,9 +1,13 @@
 <?php
 require 'Users.php';
 require 'Grievance.php';
+require 'Otp.php';
 
 header('Cache-Control: no cache');
 session_cache_limiter('private_no_expire');
+
+$isotpboxsignal = false;
+$issigninotpsignal = false;
 
 if(!isset($_SESSION['sid'])){
     session_start();
@@ -27,6 +31,19 @@ if(isset($_REQUEST['signup'])){
                 $_REQUEST['birth'],
                 $_REQUEST['gender'],
                 0);
+        } elseif ($loginType == 'faculty') {
+            addUsers($loginType,
+                null,
+                $_REQUEST['department'],
+                null,
+                $_REQUEST['fname'],
+                $_REQUEST['lname'],
+                $_REQUEST['email'],
+                sha1($_REQUEST['pass']),
+                $_REQUEST['phone'],
+                $_REQUEST['birth'],
+                $_REQUEST['gender'],
+                0);
         } else {
             addUsers($loginType,
                 null,
@@ -41,7 +58,8 @@ if(isset($_REQUEST['signup'])){
                 $_REQUEST['gender'],
                 0);
         }
-        echo "<script>alert(\"Sign Up Successfully!\");</script>";
+        sendOtptoUser($_REQUEST['email'],$_REQUEST['fname'],$_REQUEST['lname']);
+        echo "<script>alert(\"One Time Password is Sent to Your Email For Verification!\");</script>";
     } else {
         echo "<script>alert(\"This EMail is Already Exists!\");</script>";
     }
@@ -56,23 +74,50 @@ if(isset($_REQUEST['signin'])){
     } else if(empty($user)){
         echo "<script>alert(\"Password Does Not Match!\");</script>";
     } else {
-        $result = getUser($_REQUEST['email'],sha1($_REQUEST['pass']));
-        $_SESSION['uid'] = $result[0]["Id"];
-        $_SESSION['uname'] = $_REQUEST['email'];
-        $_SESSION['pass'] = sha1($_REQUEST['pass']);
+        $isVerified = isVerified($_REQUEST['email']);
+        if($isVerified[0]['Verify'] > 0){
+            $result = getUser($_REQUEST['email'],sha1($_REQUEST['pass']));
+            $_SESSION['uid'] = $result[0]["Id"];
+            $_SESSION['uname'] = $_REQUEST['email'];
+            $_SESSION['pass'] = sha1($_REQUEST['pass']);
+        } else {
+            $_SESSION['email'] = $_REQUEST['email'];
+            $_SESSION['pass'] = sha1($_REQUEST['pass']);
+            $issigninotpsignal = true;
+        }
     }
     unset($_REQUEST['signin']);
 }
 
 if(isset($_REQUEST['query'])){
     if(isset($_SESSION['uid']) && isset($_SESSION['uname'])) {
-		$result = getUser($_SESSION['uname'],$_SESSION['pass']);
+        $result = getUser($_SESSION['uname'],$_SESSION['pass']);
         addGrievance($result, $_SESSION['uname'], $_REQUEST['qdept'], $_REQUEST['qstatement']);
         echo "<script>alert(\"Your Grievance Submited Successfully!\");</script>";
     } else {
         echo "<script>alert(\"Error in Grievance Submission!\");</script>";
     }
     unset($_REQUEST['query']);
+}
+
+if(isset($_REQUEST['otpbox'])){
+    $isVerified = isVerified($_SESSION['email']);
+    if($isVerified[0]['Verify'] > 0){
+        echo '<script>alert("You Are Already Verified!");</script>';
+    } else {
+        $reqotp = $_REQUEST['otp'];
+        $otp = getOtp($_SESSION['email'])[0]['Otp'];
+        if($otp == $reqotp){
+            $result = getUser($_SESSION['email'],$_SESSION['pass']);
+            VerifyMail(true,$_SESSION['email']);
+            SendVerified($_SESSION['email'],$result[0]["FName"],$result[0]["LName"]);
+            $isotpboxsignal = true;
+        } else {
+            echo '<script>alert("Your Entered OTP is Wrong, Try again!");</script>';
+        }
+    }
+    unset($_SESSION['email']);
+    unset($_REQUEST['otpbox']);
 }
 
 if(isset($_REQUEST['signout']) && isset($_SESSION['uid'])){
@@ -96,6 +141,10 @@ if(isset($_REQUEST['signout']) && isset($_SESSION['uid'])){
     <link href="css/main.css" rel="stylesheet">
     <link rel="stylesheet" href="css/swc.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="js/popper.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/mdb.min.js"></script>
 </head>
 
 <body id="top">
@@ -160,11 +209,14 @@ if(isset($_REQUEST['signout']) && isset($_SESSION['uid'])){
                         <div id="field-dept" class="fb-text form-group field-dept">
                             <label class="fb-text-label">Department</label><br>
                             <select name="department" title="Department" style="width: 150px;">
-                                <option value="computer" selected>Computer</option>
-                                <option value="mechanical">Mechanical</option>
-                                <option value="civil">Civil</option>
-                                <option value="chemical">Chemical</option>
-                                <option value="electrical">Electrical</option>
+                                <option value="be-computer" selected>BE Computer</option>
+                                <option value="be-mechanical">BE Mechanical</option>
+                                <option value="be-civil">BE Civil</option>
+                                <option value="be-chemical">BE Chemical</option>
+                                <option value="be-electrical">BE Electrical</option>
+                                <option value="bvoc-software-development">B.Voc. Software Development </option>
+                                <option value="bvoc-refrigeration">B.Voc. Refrigeration</option>
+                                <option value="bvoc-production-technology">B.Voc. Production Technology</option>
                             </select>
                         </div>
                         <div id="field-sem" class="fb-text form-group field-sem">
@@ -311,6 +363,32 @@ if(isset($_REQUEST['signout']) && isset($_SESSION['uid'])){
                 <div class="modal-footer d-flex justify-content-center">
                     <button class="btn btn-indigo btn-default" type="submit" name="query" id="query">Submit</button>
                 </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- OTP Section-->
+    <div class="modal fade" id="modalOtpBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100 font-weight-bold">Account Verification</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <p class="font-small dark-grey-text text-right d-flex justify-content-center mb-3 pt-2"></p>
+                <form method="post" id="otp-form">
+                    <div class="modal-body mx-3">
+                        <p style="text-align: center;"><b>Otp Sent to Your EMail to Verify Your Account</b></p><br>
+                        <div class="md-form mb-4">
+                            <input type="text" name="otp" id="otp" class="form-control validate">
+                            <label data-error="wrong" data-success="right" for="otp">Enter OTP</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button class="btn btn-indigo btn-default" type="submit" name="otpbox" id="otpbox">Submit</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -489,10 +567,10 @@ if(isset($_REQUEST['signout']) && isset($_SESSION['uid'])){
                             <div class="container">
                                 <div class="wow fadeIn">
                                     <div class="wow fadeIn">
-                                        <h2 class="h2 pt-5 pb-3" style="margin-top: -50px; margin-left: -20px; text-decoration: underline black dashed">COMMITTEE MEMBERS</h2>
+                                        <h2 class="h2 pt-5 pb-3" style="margin-top: -50px; margin-left: -20px;">COMMITTEE MEMBERS</h2>
                                     </div>
                                 </div>
-                                <div class="row" style="margin-left: 420px">
+                                <div class="row">
                                     <div class="col-md-4 mb-r wow fadeInUp" data-wow-delay=".4s">
                                         <h3 class="h4 mt-3"><b>PRINCIPAL</b></h3>
                                         <p class="font-bold">Dr. Latesh B. Chaudhari<br> +91 98986 73451<br> lbc.fetr@gmail.com</p>
@@ -550,7 +628,7 @@ if(isset($_REQUEST['signout']) && isset($_SESSION['uid'])){
     </div>-->
     <div class="footer-copyright">
         <div class="container-fluid">
-            <p>&copy; <a href="https://www.fetr.ac.in">Copyright by RNGPIT 2019</a> - <a href="" data-toggle="modal" data-target="#modalDeveloper">Developed By RNGPIT</a></p>
+            <p>&copy; <a href="https://www.fetr.ac.in">Copyright by RNGPIT 2019</a> - <a href="" data-toggle="modal" data-target="#modalDeveloper">Developed By RNGPIT</a> - <img src='http://online-visit-counter.com/cg.php?t=MTQzNTQ5MQ==' border='0' alt='hit counter'></p>
         </div>
     </div>
 </footer>
@@ -558,9 +636,21 @@ if(isset($_REQUEST['signout']) && isset($_SESSION['uid'])){
 <script type="text/javascript" src="js/popper.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/mdb.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js"></script>
+<!-- <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js"></script> -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
 <script type="text/javascript" src="js/swc.js"></script>
 <script type="text/javascript" src="js/validate.js"></script>
+<?php
+    if($isotpboxsignal == true){
+        echo '<script>
+                    alert("Your Are Verified Successfully!");
+                    $("#modalLoginForm").modal("show");
+              </script>';
+    }
+
+    if($issigninotpsignal == true){
+        echo "<script>$('#modalOtpBox').modal('show');</script>";
+    }
+?>
 </body>
 </html>
