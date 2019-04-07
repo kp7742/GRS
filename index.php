@@ -34,7 +34,7 @@ if(isset($_REQUEST['signup'])){
         } elseif ($loginType == 'faculty') {
             addUsers($loginType,
                 null,
-                $_REQUEST['department'],
+                $_REQUEST['department2'],
                 null,
                 $_REQUEST['fname'],
                 $_REQUEST['lname'],
@@ -106,7 +106,8 @@ if(isset($_REQUEST['otpbox'])){
         echo '<script>alert("You Are Already Verified!");</script>';
     } else {
         $reqotp = $_REQUEST['otp'];
-        $otp = getOtp($_SESSION['email'])[0]['Otp'];
+		$otpresult = getOtp($_SESSION['email']);
+        $otp = $otpresult[0]['Otp'];
         if($otp == $reqotp){
             $result = getUser($_SESSION['email'],$_SESSION['pass']);
             VerifyMail(true,$_SESSION['email']);
@@ -133,8 +134,8 @@ if(isset($_REQUEST['signout']) && isset($_SESSION['uid'])){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Grievance Redressal System </title>
-    <meta name="description" content="NRICell Portal"/>
-    <link rel="icon" href="img/FINAL_RNGPIT_4_12_18.png" sizes="16x16">
+    <meta name="description" content="GRIEVANCE REDRESSAL SYSTEM"/>
+    <link rel="icon" href="img/ngpp.png" sizes="16x16">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/mdb.min.css" rel="stylesheet">
@@ -153,8 +154,8 @@ if(isset($_REQUEST['signout']) && isset($_SESSION['uid'])){
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top scrolling-navbar" id="navbar">
         <div class="container" >
                 <span class="blinking">
-            <img src="img/FINAL_RNGPIT_4_12_18.png" style="margin-left:-120px; height:155px; width: 140px;"/></span>
-            <a class="navbar-brand" href="#">Sardar Vallabhbhai Patel Education Society Managed<br><strong style="font-size: 25px;">R. N. G. Patel Institute of Technology - RNGPIT<br>Faculty of Engineering Technology & Research </strong><br>[Affiliated with G.T.U. & approved by A.I.C.T.E.] </a>
+            <img src="img/ngpp.png" style="margin-left:-120px; height:155px; width: 140px;"/></span>
+            <a class="navbar-brand" href="#">Sardar Vallabhbhai Patel Education Society Managed<br><strong style="font-size: 25px;"><br> N.G.PATEL POLYTECHNIC<br></strong><br>[Affiliated with G.T.U. & approved by A.I.C.T.E.] </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent"
                     aria-controls="navbarContent"
                     aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span>
@@ -163,7 +164,6 @@ if(isset($_REQUEST['signout']) && isset($_SESSION['uid'])){
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item"><a class="nav-link active" href="#home" style="font-size: 25px;" >Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="#news" style="font-size: 25px;">News</a></li>
-                    <!--<li class="nav-item"><a class="nav-link" href="#blogs">Blogs</a></li>-->
                     <li class="nav-item"><a class="nav-link" href="#contact" style="font-size: 25px;">Contact</a></li>
                 </ul>
             </div>
@@ -209,15 +209,21 @@ if(isset($_REQUEST['signout']) && isset($_SESSION['uid'])){
                         <div id="field-dept" class="fb-text form-group field-dept">
                             <label class="fb-text-label">Department</label><br>
                             <select name="department" title="Department" style="width: 150px;">
-                                <option value="be-computer" selected>BE Computer</option>
-                                <option value="be-mechanical">BE Mechanical</option>
-                                <option value="be-civil">BE Civil</option>
-                                <option value="be-chemical">BE Chemical</option>
-                                <option value="be-electrical">BE Electrical</option>
-                                <option value="bvoc-software-development">B.Voc. Software Development </option>
-                                <option value="bvoc-refrigeration">B.Voc. Refrigeration</option>
-                                <option value="bvoc-production-technology">B.Voc. Production Technology</option>
+                                <option value="dp-computer" selected>Diploma in Computer Engineering</option>
+                                <option value="dp-mechanical">Diploma in Mechanical Engineering </option>
+                                <option value="dp-electrical">Diploma in Electrical Engineering</option>
+                                <option value="dp-chemical">Diploma in Chemical Engineering</option>
                             </select>
+                        </div>
+						<div id="field-dept2" class="fb-text form-group field-dept">
+                            <label class="fb-text-label">Department</label><br>
+							<select name="department2" title="Department" style="width: 150px;">
+                                <option value="computer" selected>Computer</option>
+                                <option value="mechanical">Mechanical</option>
+                                <option value="chemical">Chemical</option>
+                                <option value="electrical">Electrical</option>
+								<option value="scienceandhumanity">Science & Humanity</option>
+                                 </select>
                         </div>
                         <div id="field-sem" class="fb-text form-group field-sem">
                             <label for="sem" class="fb-text-label">Semester</label>
@@ -479,8 +485,8 @@ if(isset($_REQUEST['signout']) && isset($_SESSION['uid'])){
                     <a class="font-bold" href="news3.php">Read More</a>
                 </div> -->
                 <div class="col-md-3 mb-r wow fadeInUp" data-wow-delay=".6s">
-                    <img src="img/FINAL_RNGPIT_4_12_18.png" width="160" height="160">
-                    <h3 class="h4 mt-3">R. N. G. Patel Institute of Technology, Bardoli</h3>
+                    <img src="img/ngpp.png" width="160" height="160">
+                    <h3 class="h4 mt-3">N.G.PATEL POLYTECHNIC, Bardoli</h3>
                     <a class="font-bold" href="news4.php">Read More</a>
                 </div>
             </div>
@@ -572,38 +578,34 @@ if(isset($_REQUEST['signout']) && isset($_SESSION['uid'])){
                                 </div>
                                 <div class="row">
                                     <div class="col-md-4 mb-r wow fadeInUp" data-wow-delay=".4s">
-                                        <h3 class="h4 mt-3"><b>PRINCIPAL</b></h3>
-                                        <p class="font-bold">Dr. Latesh B. Chaudhari<br> +91 98986 73451<br> lbc.fetr@gmail.com</p>
+                                        <h3 class="h4 mt-3"><b>I/C PRINCIPAL</b></h3>
+                                        <p class="font-bold">Mr.K. R. Desai<br> krd.ngpp@gmail.com</p>
                                     </div>
                                 </div>
                                 <div class="row">
                                      <div class="col-md-4 mb-r wow fadeInUp" data-wow-delay=".3s">
                                         <h3 class="h4 mt-3"><b>MECHANICAL ENGINEERING</b></h3>
-                                        <p class="font-bold">Dr. K. B. Rathod<br> +91 99240 44142 <br> kbr.fetr@gmail.com</p>
+                                        <p class="font-bold">Mr. M. M. Jikar<br> mmj.ngpp@gmail.com</p>
                                         <p class="font-bold"></p>
                                     </div> 
                                     <div class="col-md-4 mb-r wow fadeInUp" data-wow-delay=".4s">
                                         <h3 class="h4 mt-3"><b>CHEMICAL ENGINEERING</b></h3>
-                                        <p class="font-bold">Dr. J. M. Barad<br> +91 98241 34132<br> jmb.fetr@gmail.com</p>
+                                        <p class="font-bold">Mr. K. R. Desai<br> krd.ngpp@gmail.com</p>
                                     </div>
                                    <div class="col-md-4 mb-r wow fadeInUp" data-wow-delay=".5s">
-                                        <h3 class="h4 mt-3"><b>COMPUTER SCIENCE & ENGINEERING</b></h3>
-                                        <p class="font-bold">Ms. B. R. Bhatt<br> +91 98796 79953<br> brb.fetr@gmail.com</p>
+                                        <h3 class="h4 mt-3"><b>COMPUTER ENGINEERING</b></h3>
+                                        <p class="font-bold">Mr. R. J. Patel<br> +91 99742 77438<br> rjp.ngpp@gmail.com</p>
                                     </div> 
                                 </div>
                                 <div class="row">
                                      <div class="col-md-4 mb-r wow fadeInUp" data-wow-delay=".3s">
                                         <h3 class="h4 mt-3"><b>ELECTRICAL ENGINEERING</b></h3>
-                                        <p class="font-bold">Mr. C. D. Desai<br> +91 99096 01202 <br> cdd.fetr@gmail.com</p>
+                                        <p class="font-bold">Mr. V. K. Patel <br> vkp.ngpp@gmail.com</p>
                                         <p class="font-bold"></p>
-                                    </div> 
-                                    <div class="col-md-4 mb-r wow fadeInUp" data-wow-delay=".4s">
-                                        <h3 class="h4 mt-3"><b>CIVIL ENGINEERING</b></h3>
-                                        <p class="font-bold">Mr. S. J. Patel<br> +91 98259 44054<br> sjp.fetr@gmail.com</p>
                                     </div>
                                    <div class="col-md-4 mb-r wow fadeInUp" data-wow-delay=".5s">
                                         <h3 class="h4 mt-3"><b>SCIENCE & HUMANITY</b></h3>
-                                        <p class="font-bold">Mr. D. A. Dadhania<br> +91 99251 58466<br> dad.fetr@gmail.com</p>
+                                        <p class="font-bold">Dr. P. R. Patel<br> prp.ngpp@gmail.com</p>
                                     </div> 
                                 </div>
                             </div>
@@ -628,7 +630,7 @@ if(isset($_REQUEST['signout']) && isset($_SESSION['uid'])){
     </div>-->
     <div class="footer-copyright">
         <div class="container-fluid">
-            <p>&copy; <a href="https://www.fetr.ac.in">Copyright by RNGPIT 2019</a> - <a href="" data-toggle="modal" data-target="#modalDeveloper">Developed By RNGPIT</a> - <img src='http://online-visit-counter.com/cg.php?t=MTQzNTQ5MQ==' border='0' alt='hit counter'></p>
+            <p>&copy; <a href="https://www.fetr.ac.in">Copyright by NGPP 2019</a> - <a href="" data-toggle="modal" data-target="#modalDeveloper">Developed By NGPP</a></p>
         </div>
     </div>
 </footer>

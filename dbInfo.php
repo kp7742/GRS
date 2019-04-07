@@ -1,17 +1,33 @@
 <?php
+
 	function getServer() {
-		return "sql177.main-hosting.eu";
+
+		return "localhost";
+
 	}
+
+
 
 	function getDatabaseName() {
-		return "u655486056_grs";
+
+		return "ngpatelp_grievance";
+
 	}
+
+
 
 	function getUserName() {
-		return "u655486056_kmods";
+
+		return "ngpatelp_rjp";
+
 	}
 
+
+
 	function getPassword() {
-		return "Kuldip123";
+
+		return "Rjp@3580";
+
 	}
+
 ?>
